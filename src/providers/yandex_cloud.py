@@ -1,7 +1,5 @@
 import requests
 from config import token
-url_disk = 'https://cloud-api.yandex.net/v1/disk'
-url_files = 'https://cloud-api.yandex.net/v1/disk/resources/files'
 
 
 class CloudStorageApi:
@@ -26,6 +24,7 @@ class CloudStorageApi:
             "limit": 1000,
             "fields": "items.name,items.path,items.size, items.modified",
         }
+
         response = self._make_request(method='get', endpoint='files', params=params)
 
         if response.status_code >= 400:
@@ -62,6 +61,7 @@ class CloudStorageApi:
         if response.status_code not in (201, 202):
             print(f"Файл '{local_file_path.split('/')[-1]}' не {['записан', "перезаписан"][overwrite]}. Ошибка: {response.json()['message']}")
             return
+        print(response.status_code)
         print(f"Файл '{local_file_path.split('/')[-1]}' успешно {['записан', "перезаписан"][overwrite]}.")
         return True
 
@@ -83,21 +83,21 @@ if __name__ == "__main__":
     # Проверка get_info
     print("Проверка get_info")
     l = cloud.get_info()
+    # print(l)
     for i in l:
         print(i)
 
-    print("Проверка load")
-    cloud.load(
-            local_file_path="/home/user/Downloads/Техническое задание «Сервис синхронизации файлов».docx",
-            remote_file_name="Техническое задание «Сервис синхронизации файлов».docx",
-        )
-    # #
-    # Проверка reload
+    # print("Проверка load")
+    # cloud.load(
+    #         local_file_path="/home/user/Desktop/Центр карьеры Скиллбокс/Байков П.М. резюме Skillbox.docx",
+    #         remote_file_name="Байков П.М. резюме Skillbox.docx",
+    #     )
+
     print("Проверка reload")
     cloud.reload(
-            local_file_path="/home/user/Downloads/Техническое задание «Сервис синхронизации файлов».docx",
-            remote_file_name="Техническое задание «Сервис синхронизации файлов».docx",
+            local_file_path="/home/user/Desktop/Центр карьеры Скиллбокс/Байков П.М. резюме Skillbox.docx",
+            remote_file_name="Байков П.М. резюме Skillbox.docx",
         )
-    print('Проверка delete')
-    cloud.delete(remote_file_name='Техническое задание «Сервис синхронизации файлов».docx')
+    # print('Проверка delete')
+    # cloud.delete(remote_file_name='Техническое задание «Сервис синхронизации файлов».docx')
 
