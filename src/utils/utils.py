@@ -22,7 +22,7 @@ def get_remote_file_data(remote_file: Dict) -> Dict[str, Any]:
     return {"modified": modified_str, "size": size, "path": path}
 
 
-def get_all_files_from_remote_path(remote_files: List) -> Dict:
+def get_all_remote_files_data(remote_files: List) -> Dict:
     remote_files_data = {}
     for remote_file in remote_files:
         name = remote_file['name']

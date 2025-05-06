@@ -1,0 +1,66 @@
+from scanner import get_all_files_from_local_path
+from src.providers.yandex_cloud import CloudStorageApi
+from src.core.comparator import Comparator
+from config import token, PATH
+
+class SyncEngine():
+    def __init__(self, local_path, token, remote_folder_name: str =""):
+        self.local_path = local_path
+        self.cloud_api = CloudStorageApi(token=token, remote_folder_name=f'/{local_path.split('/')[-1]}')
+        self.comparator = self.compare_data()
+
+    def get_local_files_data(self):
+        local_files = get_all_files_from_local_path(user_path=self.local_path)
+        return local_files
+
+    def get_remote_files_data(self):
+        remote_files = self.cloud_api.get_remote_files_data()
+        return remote_files
+
+    def compare_data(self):
+        comparator =Comparator(
+            local_files_data=self.get_local_files_data(),
+            remote_files_data=self.get_remote_files_data(),
+        )
+        return comparator
+
+    def load_local_files_to_cloud(self):
+        comparator = self.comparator
+        local_files_not_on_remotes = comparator.get_local_files_not_on_remotes()
+        if local_files_not_on_remotes:
+            for name, metadata in local_files_not_on_remotes.items():
+                self.cloud_api.load(
+                    local_file_path=metadata['path'],
+                    remote_file_name = name,
+                )
+
+    def load_modified_local_files_to_cloud(self):
+        comparator = self.comparator
+        local_modified_files = comparator.get_local_modified_files()
+        if local_modified_files:
+            for name, metadata in local_modified_files.items():
+                self.cloud_api.reload(
+                    local_file_path=metadata['path'],
+                    remote_file_name = name,
+                )
+
+    def delete_remote_files_not_on_local(self):
+        remote_files_not_on_local=self.comparator.get_remote_files_not_on_local()
+        if remote_files_not_on_local:
+            for name, metadata in remote_files_not_on_local.items():
+                self.cloud_api.delete(
+                    remote_file_name = name,
+                )
+
+    def run(self):
+        self.load_local_files_to_cloud()
+        self.load_modified_local_files_to_cloud()
+        self.delete_remote_files_not_on_local()
+
+
+if __name__ == '__main__':
+    print(PATH)
+    api = SyncEngine(local_path= PATH, token=token, remote_folder_name='/Загрузк')
+    print(api.get_local_files_data())
+    print(api.get_remote_files_data())
+    api.run()
