@@ -1,8 +1,9 @@
 from src.providers.yandex_cloud import CloudStorageApi
 from src.utils.utils import get_all_remote_files_data
-from config import token, PATH
+from config import TOKEN, PATH
 from scanner import get_all_files_from_local_path
-
+from src.utils.logger import logger
+import os
 
 
 class Comparator:
@@ -35,9 +36,10 @@ class Comparator:
         Retrieve files that exist locally but are missing on the remote storage.
         """
         local_files_not_on_remotes = {}
-        for local_file, data in self.local_files.items():
-            if local_file not in self.remote_files:
-                local_files_not_on_remotes[local_file] = data
+        if self.local_files:
+            for local_file, data in self.local_files.items():
+                if local_file not in self.remote_files:
+                    local_files_not_on_remotes[local_file] = data
 
         return local_files_not_on_remotes
 
@@ -46,9 +48,10 @@ class Comparator:
         Retrieve files that have been modified locally compared to their remote counterparts.
         """
         locally_modified_files = {}
-        for local_file, data in self.local_files.items():
-            if local_file in self.remote_files and data['modified'] > self.remote_files[local_file]['modified']:
-                locally_modified_files[local_file] = data
+        if self.local_files:
+            for local_file, data in self.local_files.items():
+                if local_file in self.remote_files and data['modified'] > self.remote_files[local_file]['modified']:
+                    locally_modified_files[local_file] = data
 
         return locally_modified_files
 
@@ -57,22 +60,26 @@ class Comparator:
         Retrieve files that exist on the remote storage but are missing locally.
         """
         remote_files_not_on_local = {}
-        for remote_file, data in self.remote_files.items():
-            if remote_file not in self.local_files:
-                remote_files_not_on_local[remote_file] = data
+        if self.remote_files:
+            for remote_file, data in self.remote_files.items():
+                if remote_file not in self.local_files:
+                    remote_files_not_on_local[remote_file] = data
 
         return remote_files_not_on_local
 
+    def check_local_path(self):
+        """ Check exist the local path"""
+        if self.local_files:
+            return True
+        return False
+
+    def check_remote_path(self):
+        """Check exist the remote path"""
+        if self.remote_files is not None:
+            return True
+        return False
+
+
 
 if __name__ == '__main__':
-
-    api = CloudStorageApi(token=token, remote_folder_name='/Загрузки')
-    remote_files = api.get_info()
-    remote_data = get_all_remote_files_data(remote_files)
-    print(remote_data)
-    local_data = get_all_files_from_local_path(user_path=PATH)
-    print(local_data)
-    compare = Comparator(local_files_data=local_data, remote_files_data=remote_data)
-    data =compare.get_comparison_results()
-    for i, v in data.items():
-        print(i, v)
+    api = CloudStorageApi(token=TOKEN, remote_folder_name='/Загрузки')

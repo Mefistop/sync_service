@@ -2,6 +2,7 @@ import os
 from config import PATH
 from src.utils.utils import get_local_file_data
 from typing import Dict, Any, List
+from src.utils.logger import logger
 
 def get_all_files_from_local_path(user_path: str)->Dict:
     if os.path.exists(user_path):
@@ -14,7 +15,7 @@ def get_all_files_from_local_path(user_path: str)->Dict:
                         files_data[file.name] = file_metadata
         return files_data
     else:
-        print(f'Ошибка сканирования локального диска: {user_path} не существует')
+        logger.error(f"Ошибка сканирования локального диска: директории '{user_path}' не существует")
 
 
 if __name__ == '__main__':
