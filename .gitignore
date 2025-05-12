@@ -144,5 +144,4 @@ data/
 *.sqlite3
 /uploads/
 cache/
-config.py
 

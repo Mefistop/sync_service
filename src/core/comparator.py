@@ -1,10 +1,5 @@
 from src.providers.yandex_cloud import CloudStorageApi
-from src.utils.utils import get_all_remote_files_data
-from config import TOKEN, PATH
-from scanner import get_all_files_from_local_path
-from src.utils.logger import logger
-import os
-
+from config import TOKEN, LOCAL_PATH
 
 class Comparator:
 

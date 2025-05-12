@@ -1,5 +1,5 @@
 import os
-from config import PATH
+from config import LOCAL_PATH
 from src.utils.utils import get_local_file_data
 from typing import Dict, Any, List
 from src.utils.logger import logger

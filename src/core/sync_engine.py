@@ -1,10 +1,11 @@
-from scanner import get_all_files_from_local_path
+import time
+from src.core.scanner import get_all_files_from_local_path
 from src.providers.yandex_cloud import CloudStorageApi
 from src.core.comparator import Comparator
-from config import TOKEN, PATH
+from config import TOKEN, LOCAL_PATH
 from src.utils.logger import logger
 
-class SyncEngine():
+class SyncEngine:
     def __init__(self, local_path, token, remote_folder_name: str =""):
         self.local_path = local_path
         if not remote_folder_name:
@@ -63,13 +64,21 @@ class SyncEngine():
         else:
             logger.info("Отсуствуют файлы из облака, не синхронизированные с локальной директорией.")
 
-    def run(self):
+    def run_once(self):
         if self.comparator.check_local_path() and self.comparator.check_remote_path():
             self.load_local_files_to_cloud()
             self.load_modified_local_files_to_cloud()
             self.delete_remote_files_not_on_local()
 
+    def run_periodical(self, interval_seconds: int):
+        while True:
+            logger.info(f'Программа синхронизации файлов начинает работу с директорией {self.local_path}.')
+            self.run_once()
+            logger.info(f"Синхронизация завершена. Ожидаю {interval_seconds} секунд до следующей итерации.")
+            time.sleep(interval_seconds)
+
+
 
 if __name__ == '__main__':
     api = SyncEngine(local_path= PATH, token=TOKEN, remote_folder_name='/Загрузи')
-    api.run()
+    api.run_periodical(500)
