@@ -1,10 +1,11 @@
 import os
 from config import LOCAL_PATH
 from src.utils.utils import get_local_file_data
-from typing import Dict, Any, List
+from typing import Dict, Optional
 from src.utils.logger import logger
 
-def get_all_files_from_local_path(user_path: str)->Dict:
+def get_all_files_from_local_path(user_path: str)->Optional[Dict]:
+    """Scans the specified local directory and retrieves metadata for all files."""
     if os.path.exists(user_path):
         files_data = {}
         with os.scandir(user_path) as files:
@@ -19,6 +20,6 @@ def get_all_files_from_local_path(user_path: str)->Dict:
 
 
 if __name__ == '__main__':
-    data = get_all_files_from_local_path(user_path=PATH)
+    data = get_all_files_from_local_path(user_path=LOCAL_PATH)
     for i in data.items():
         print(i)

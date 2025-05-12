@@ -45,7 +45,7 @@ class CloudStorageApi:
         response = self._make_request(method='get', endpoint='files', params=params)
 
         if response.status_code >= 400:
-            logger.error(f'Не удалось установить подключиться Яндекс Диску. Ошибка {response.json()['message']}.')
+            logger.error(f"Не удалось установить подключиться Яндекс Диску. Ошибка {response.json()['message']}.")
             return None
 
         response_data = response.json()
@@ -70,7 +70,7 @@ class CloudStorageApi:
         response_for_upload = self._make_request(method='get', endpoint='upload', params=params)
 
         if response_for_upload.status_code >= 400:
-            logger.error(f"Файл '{local_file_path.split('/')[-1]}' не {['записан', "перезаписан"][overwrite]}. Ошибка: {response_for_upload.json()['message']}")
+            logger.error(f"Файл '{local_file_path.split('/')[-1]}' не {['записан', 'перезаписан'][overwrite]}. Ошибка: {response_for_upload.json()['message']}")
             return None
 
         upload_info = response_for_upload.json()
@@ -90,10 +90,10 @@ class CloudStorageApi:
 
         if response.status_code not in (201, 202):
             logger.error(
-                f"Файл '{local_file_path.split('/')[-1]}' не {['записан', "перезаписан"][overwrite]}. Ошибка: {response.json()['message']}"
+                f"Файл '{local_file_path.split('/')[-1]}' не {['записан', 'перезаписан'][overwrite]}. Ошибка: {response.json()['message']}"
             )
             return None
-        logger.info(f"Файл '{local_file_path.split('/')[-1]}' успешно {['записан', "перезаписан"][overwrite]}.")
+        logger.info(f"Файл '{local_file_path.split('/')[-1]}' успешно {['записан', 'перезаписан'][overwrite]}.")
         return True
 
 
