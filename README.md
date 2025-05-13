@@ -38,8 +38,7 @@
 ## Установка
 ### 1. Клонируйте репозиторий: 
 ```bash
-  git clone https://github.com/your-repo/file-sync-service.git 
-  cd file-sync-service
+  git clone https://github.com/Mefistop/sync_service.git 
  ```
 ### 2. Установите зависимости: 
 ```bash
@@ -96,7 +95,6 @@ syn_service: sync_engine.py  2025-05-12 22:05:39 INFO Синхронизация
 ```text
 .
 ├── config.py          # Чтение конфигурации
-├── logs.log           # Файл логов
 ├── main.py            # Главный файл приложения
 ├── requirements.txt   # Зависимости
 └── src/
