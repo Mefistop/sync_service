@@ -1,5 +1,5 @@
 from src.providers.yandex_cloud import CloudStorageApi
-from config import TOKEN, LOCAL_PATH
+from config import TOKEN
 
 class Comparator:
 
@@ -45,10 +45,17 @@ class Comparator:
         locally_modified_files = {}
         if self.local_files:
             for local_file, data in self.local_files.items():
-                if local_file in self.remote_files and data['modified'] > self.remote_files[local_file]['modified']:
+                if self.is_modified_local_file(file=local_file, data=data):
+                # if local_file in self.remote_files and data['modified'] > self.remote_files[local_file]['modified']:
                     locally_modified_files[local_file] = data
 
         return locally_modified_files
+
+    def is_modified_local_file(self, file, data):
+        """Check local file is modified"""
+        if file in self.remote_files and data['modified'] > self.remote_files[file]['modified']:
+            return True
+        return False
 
     def get_remote_files_not_on_local(self):
         """
@@ -73,7 +80,6 @@ class Comparator:
         if self.remote_files is not None:
             return True
         return False
-
 
 
 if __name__ == '__main__':

@@ -140,4 +140,4 @@ class CloudStorageApi:
 
 
 if __name__ == "__main__":
-    cloud = CloudStorageApi(token=TOKEN, remote_folder_name='/Загрузк')
+    pass

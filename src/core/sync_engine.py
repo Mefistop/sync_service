@@ -1,9 +1,11 @@
 import time
-from src.core.scanner import get_all_files_from_local_path
+from src.core.scanner import Scanner
 from src.providers.yandex_cloud import CloudStorageApi
 from src.core.comparator import Comparator
 from config import TOKEN, LOCAL_PATH
 from src.utils.logger import logger
+import sys
+
 
 class SyncEngine:
     """
@@ -12,7 +14,8 @@ class SyncEngine:
 
     def __init__(self, local_path, token, remote_folder_name: str =""):
         """Initializes the SyncEngine instance."""
-        self.local_path = local_path
+        # self.local_path = local_path
+        self.scanner = Scanner(local_path=local_path)
         if not remote_folder_name:
             remote_folder_name = f"/{local_path.split('/')[-1]}"
         self.cloud_api = CloudStorageApi(token=token, remote_folder_name=remote_folder_name)
@@ -20,7 +23,8 @@ class SyncEngine:
 
     def get_local_files_data(self):
         """Retrieves metadata for all files in the local directory."""
-        local_files = get_all_files_from_local_path(user_path=self.local_path)
+        # local_files = get_all_files_from_local_path(user_path=self.local_path)
+        local_files = self.scanner.get_files_from_local_path()
         return local_files
 
 
@@ -85,11 +89,13 @@ class SyncEngine:
     def run_periodical(self, interval_seconds: int):
         """Runs the synchronization process periodically at a specified interval."""
         while True:
-            logger.info(f'Программа синхронизации файлов начинает работу с директорией {self.local_path}.')
-            self.run_once()
-            logger.info(f"Синхронизация завершена. Ожидаю {interval_seconds} секунд до следующей итерации.")
-            time.sleep(interval_seconds)
-
+            try:
+                self.run_once()
+                logger.info(f"Синхронизация завершена. Ожидаю {interval_seconds} секунд до следующей итерации.")
+                time.sleep(interval_seconds)
+            except KeyboardInterrupt:
+                logger.info(f"Работа программы синхронизации файлов завершена. Спасибо, что выбрали наш продукт.")
+                sys.exit(1)
 
 
 if __name__ == '__main__':
