@@ -80,21 +80,31 @@ class CloudStorageApi:
 
     def load_file_to_remote(self, url, local_file_path: str, overwrite):
         """Uploads a file from the local system to the remote storage."""
-        with open(local_file_path, 'rb') as file:
-            response = self.session.request(
-                method='put',
-                url=url,
-                data=file,
-                headers=self.headers,
-            )
+        try:
+            with open(local_file_path, 'rb') as file:
+                response = self.session.request(
+                    method='put',
+                    url=url,
+                    data=file,
+                    headers=self.headers,
+                    timeout=30,
+                )
+            if response.status_code not in (201, 202):
+                logger.error(
+                    f"Файл '{local_file_path.split('/')[-1]}' не {['записан', 'перезаписан'][overwrite]}. Ошибка: {response.json()['message']}"
+                )
+                return None
+            logger.info(f"Файл '{local_file_path.split('/')[-1]}' успешно {['записан', 'перезаписан'][overwrite]}.")
+            return True
 
-        if response.status_code not in (201, 202):
-            logger.error(
-                f"Файл '{local_file_path.split('/')[-1]}' не {['записан', 'перезаписан'][overwrite]}. Ошибка: {response.json()['message']}"
-            )
+        except requests.exceptions.ConnectionError:
+            logger.error(f"Загрузка файла '{local_file_path.split('/')[-1]}' превысила лимит времени (60 секунд).")
             return None
-        logger.info(f"Файл '{local_file_path.split('/')[-1]}' успешно {['записан', 'перезаписан'][overwrite]}.")
-        return True
+
+        except Exception as e:
+            logger.error(f"Произошла ошибка при загрузке файла '{local_file_path.split('/')[-1]}': {str(e)}")
+            return None
+
 
 
     def reload(self, local_file_path: str, remote_file_name: str, overwrite: bool = True):
