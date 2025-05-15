@@ -87,7 +87,7 @@ class CloudStorageApi:
                     url=url,
                     data=file,
                     headers=self.headers,
-                    timeout=30,
+                    timeout=15,
                 )
             if response.status_code not in (201, 202):
                 logger.error(
@@ -98,7 +98,7 @@ class CloudStorageApi:
             return True
 
         except requests.exceptions.ConnectionError:
-            logger.error(f"Загрузка файла '{local_file_path.split('/')[-1]}' превысила лимит времени (60 секунд).")
+            logger.error(f"Загрузка файла '{local_file_path.split('/')[-1]}' превысила лимит времени (15 секунд).")
             return None
 
         except Exception as e:

@@ -82,6 +82,7 @@ class SyncEngine:
     def run_once(self):
         """Performs a single synchronization cycle."""
         if self.comparator.check_local_path() and self.comparator.check_remote_path():
+            self.comparator = self.compare_data()
             self.load_local_files_to_cloud()
             self.load_modified_local_files_to_cloud()
             self.delete_remote_files_not_on_local()

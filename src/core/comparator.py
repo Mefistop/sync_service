@@ -1,5 +1,6 @@
 from src.providers.yandex_cloud import CloudStorageApi
 from config import TOKEN
+from src.utils.logger import logger
 
 class Comparator:
 
@@ -46,7 +47,6 @@ class Comparator:
         if self.local_files:
             for local_file, data in self.local_files.items():
                 if self.is_modified_local_file(file=local_file, data=data):
-                # if local_file in self.remote_files and data['modified'] > self.remote_files[local_file]['modified']:
                     locally_modified_files[local_file] = data
 
         return locally_modified_files
