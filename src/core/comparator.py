@@ -1,6 +1,7 @@
-from src.providers.yandex_cloud import CloudStorageApi
 from config import TOKEN
-from src.utils.logger import logger
+
+from src.providers.yandex_cloud import CloudStorageApi
+
 
 class Comparator:
 
@@ -21,9 +22,9 @@ class Comparator:
         - Files present on the remote storage but missing locally.
         """
         self.comparison_result = {
-            "local_files_not_on_remotes":self.get_local_files_not_on_remotes(),
+            "local_files_not_on_remotes": self.get_local_files_not_on_remotes(),
             "locally_modified_files": self.get_local_modified_files(),
-            "remote_files_not_on_local": self.get_remote_files_not_on_local()
+            "remote_files_not_on_local": self.get_remote_files_not_on_local(),
         }
         return self.comparison_result
 
@@ -48,12 +49,14 @@ class Comparator:
             for local_file, data in self.local_files.items():
                 if self.is_modified_local_file(file=local_file, data=data):
                     locally_modified_files[local_file] = data
-
         return locally_modified_files
 
     def is_modified_local_file(self, file, data):
         """Check local file is modified"""
-        if file in self.remote_files and data['modified'] > self.remote_files[file]['modified']:
+        if (
+            file in self.remote_files
+            and data["modified"] > self.remote_files[file]["modified"]
+        ):
             return True
         return False
 
@@ -70,7 +73,7 @@ class Comparator:
         return remote_files_not_on_local
 
     def check_local_path(self):
-        """ Check exist the local path"""
+        """Check exist the local path"""
         if self.local_files:
             return True
         return False
@@ -82,5 +85,5 @@ class Comparator:
         return False
 
 
-if __name__ == '__main__':
-    api = CloudStorageApi(token=TOKEN, remote_folder_name='/Загрузки')
+if __name__ == "__main__":
+    api = CloudStorageApi(token=TOKEN, remote_folder_name="/Загрузки")

@@ -1,7 +1,8 @@
 import os
 import sys
-from src.utils.logger import logger
 from datetime import datetime, timezone
+
+from src.utils.logger import logger
 
 
 class Scanner:
@@ -25,22 +26,30 @@ class Scanner:
         try:
             file_stat = file.stat()
             modification_time_in_sec = file_stat.st_mtime
-            modified = datetime.fromtimestamp(modification_time_in_sec).replace(tzinfo=timezone.utc)
+            modified = datetime.fromtimestamp(modification_time_in_sec).replace(
+                tzinfo=timezone.utc
+            )
             size = file_stat.st_size
             path = file.path
             return {"modified": modified, "size": size, "path": path}
         except OSError as e:
-            logger.error(f'Ошибка получения методанных для {file}: {e}')
+            logger.error(f"Ошибка получения методанных для {file}: {e}")
 
     @staticmethod
     def check_local_path(local_path: str) -> str:
-        logger.info(f'Программа синхронизации файлов начинает работу с директорией {local_path}.')
+        logger.info(
+            f"Программа синхронизации файлов начинает работу с директорией {local_path}."
+        )
         if not os.path.exists(local_path):
-            logger.error(f"Ошибка сканирования локального диска: директории '{local_path}' не существует. ")
-            logger.info(f"Проверьте корректность директории, затем снова запустить приложение")
+            logger.error(
+                f"Ошибка сканирования локального диска: директории '{local_path}' не существует."
+            )
+            logger.info(
+                f"Проверьте корректность директории, затем снова запустить приложение"
+            )
             sys.exit(1)
         return local_path
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     pass
